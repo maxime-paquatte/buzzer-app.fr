@@ -24,6 +24,7 @@ function App() {
     const [userPictureSmiley, setUserPictureSmiley] = useState(1);
     const [userPictureColor, setUserPictureColor] = useState('#999');
     const [userBackground, setUserBackground] = useState('default');
+    const [defaultHomeView, setDefaultHomeView] = useState('home');
     const [isWaitingForPong, setIsWaitingForPong] = useState(false);
     const [currentPing, setCurrentPing] = useState(0);
 
@@ -55,6 +56,7 @@ function App() {
                 setUserPictureSmiley(normalizeProfileImageIndex(data.userPicture.smiley, false));
                 setUserPictureColor(normalizeProfileColor(data.userPicture.color));
                 setUserBackground(data.userTheme.background);
+                setDefaultHomeView(data.defaultHomeView || 'home');
             } else {
                 setStatusMsg(data.message);
                 setStatus('authError');
@@ -223,7 +225,7 @@ function App() {
                             <ThemeProvider userBackground={userBackground} setUserBackground={setUserBackground}>
                                 <Router>
                                     <Routes>
-                                        <Route path="/" element={ <HomePage />} />
+                                        <Route path="/" element={ <HomePage defaultView={defaultHomeView} />} />
                                         <Route path="/server/:serverCode" element={<GameRoom currentPing={currentPing}/>} />
                                     </Routes>
                                 </Router>

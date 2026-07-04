@@ -4,9 +4,9 @@ import UserHistory from './UserHistory.jsx';
 import PublicServerList from './PublicServerList.jsx';
 import AdminServerList from './AdminServerList.jsx';
 
-function ServerView() {
+function ServerView({ initialTab = 'history' }) {
     const { userRole } = useUser();
-    const [serverActiveTab, setServerActiveTab] = useState('history');
+    const [serverActiveTab, setServerActiveTab] = useState(initialTab);
 
     const renderServerTab = () => {
         switch (serverActiveTab) {

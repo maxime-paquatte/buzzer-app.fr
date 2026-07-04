@@ -35,6 +35,8 @@ services:
       CLIENT_URL: https://buzzer.maxime-paquatte.fr
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       LISTEN_FOR_PINGS: "true"
+      # 'home' (défaut) ou 'public-servers' pour ouvrir sur la liste des salons publics
+      DEFAULT_HOME_VIEW: ${DEFAULT_HOME_VIEW:-home}
     ports:
       - "8008:3001"
     networks:

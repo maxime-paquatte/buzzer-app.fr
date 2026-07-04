@@ -30,20 +30,21 @@ function clampDragOffset(offset, tab, width) {
     return Math.max(minOffset, Math.min(maxOffset, offset));
 }
 
-function HomePage() {
+function HomePage({ defaultView = 'home' }) {
+    const initialTab = defaultView === 'public-servers' ? 0 : 1;
     const contentRef = useRef(null);
-    const currentTabRef = useRef(1);
+    const currentTabRef = useRef(initialTab);
     const dragRef = useRef({
         startX: 0,
         startY: 0,
-        startTab: 1,
+        startTab: initialTab,
         axis: null,
         lastX: 0,
         lastTime: 0,
         width: 0,
     });
 
-    const [currentTab, setCurrentTab] = useState(1);
+    const [currentTab, setCurrentTab] = useState(initialTab);
     const [dragOffset, setDragOffset] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -158,7 +159,7 @@ function HomePage() {
                     className={`home-page__tabs-track${isDragging ? ' home-page__tabs-track--dragging' : ''}`}
                     style={trackStyle}
                 >
-                    <div className="home-page__tab-panel"><ServerView /></div>
+                    <div className="home-page__tab-panel"><ServerView initialTab={defaultView === 'public-servers' ? 'public' : 'history'} /></div>
                     <div className="home-page__tab-panel"><HomeView /></div>
                     <div className="home-page__tab-panel"><SettingsView /></div>
                 </div>
