@@ -1,0 +1,52 @@
+# Stack Portainer — images pré-construites par GitHub Actions (ghcr.io)
+# Déployée sur l'endpoint "docker" (192.168.10.5) :
+#   - client : 8007 -> 80   (buzzer.maxime-paquatte.fr via HAProxy)
+#   - server : 8008 -> 3001 (api-buzzer.maxime-paquatte.fr via HAProxy, timeout tunnel 3600s)
+#   - mongodb : réseau interne uniquement, non exposé
+services:
+  buzzer-mongodb:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - buzzer_mongodb_data:/data/db
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  buzzer-client:
+    image: ghcr.io/maxime-paquatte/buzzer-client:latest
+    restart: unless-stopped
+    ports:
+      - "8007:80"
+    networks:
+      - default
+
+  buzzer-server:
+    image: ghcr.io/maxime-paquatte/buzzer-server:latest
+    restart: unless-stopped
+    environment:
+      DB_URI: mongodb://buzzer-mongodb:27017/buzzer
+      PORT: "3001"
+      CLIENT_URL: https://buzzer.maxime-paquatte.fr
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      LISTEN_FOR_PINGS: "true"
+    ports:
+      - "8008:3001"
+    networks:
+      - default
+      - backend
+    depends_on:
+      buzzer-mongodb:
+        condition: service_healthy
+
+networks:
+  backend:
+    internal: true
+
+volumes:
+  buzzer_mongodb_data:
